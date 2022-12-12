@@ -9,6 +9,14 @@ parameters:
     default: false
 
 jobs:
+  echo-parameters:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - run: echo "frontend-changed ... << pipeline.parameters.frontend-changed >>"
+      - run: echo "backend-changed ... << pipeline.parameters.backend-changed >>"
+      - run: echo "pipeline.git.branch ... << pipeline.git.branch >>"
+      - run: echo "pipeline.git.tag ... << pipeline.git.tag >>"
   frontend-job:
     docker:
       - image: cimg/base:stable
@@ -62,11 +70,19 @@ jobs:
 workflows:
   run_all_jobs:
     jobs:
+      - echo-parameters:
+          filters:
+            tags:
+              only: /.*/
       - frontend-job:
+          requires:
+            - echo-parameters
           filters:
             tags:
               only: /.*/
       - backend-job:
+          requires:
+            - echo-parameters
           filters:
             tags:
               only: /.*/
