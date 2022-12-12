@@ -43,19 +43,22 @@ jobs:
       - image: cimg/base:stable
     steps:
       - run: echo "main-branch-job is executed"
+  tag-job:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - run: echo "tag-job is executed"
+  tag-only-job:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - run: echo "tag-only-job is executed"
 
 workflows:
   run_all_jobs:
     jobs:
       - frontend-job
       - backend-job
-      - develop-branch-job:
-          requires:
-            - frontend-job
-            - backend-job
-          filters:
-            branches:
-              only: develop
       - main-branch-job:
           requires:
             - frontend-job
@@ -63,3 +66,26 @@ workflows:
           filters:
             branches:
               only: main
+      - develop-branch-job:
+          requires:
+            - frontend-job
+            - backend-job
+          filters:
+            branches:
+              only: develop
+      - tag-job:
+          requires:
+            - main-branch-job
+            - develop-branch-job
+          filters:
+            tags:
+              only: /.*/
+      - tag-only-job:
+          requires:
+            - main-branch-job
+            - develop-branch-job
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /.*/
