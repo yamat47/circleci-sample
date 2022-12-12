@@ -1,0 +1,41 @@
+version: 2.1
+
+parameters:
+  frontend-changed:
+    type: boolean
+    default: false
+  backend-changed:
+    type: boolean
+    default: false
+
+jobs:
+  frontend-job:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - when:
+          condition: << pipeline.parameters.frontend-changed >>
+          steps:
+            run: echo "frontend-job is executed"
+      - unless:
+          condition: << pipeline.parameters.frontend-changed >>
+          steps:
+            run: echo "Skip frontend-job"
+  backend-job:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - when:
+          condition: << pipeline.parameters.backend-changed >>
+          steps:
+            run: echo "backend-job is executed"
+      - unless:
+          condition: << pipeline.parameters.backend-changed >>
+          steps:
+            run: echo "Skip backend-job"
+
+workflows:
+  run_all_jobs:
+    jobs:
+      - frontend-job
+      - backend-job
