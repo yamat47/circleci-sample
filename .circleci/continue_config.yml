@@ -91,9 +91,6 @@ workflows:
             tags:
               only: /.*/
       - tag-only-job:
-          requires:
-            - main-branch-job
-            - develop-branch-job
           filters:
             branches:
               ignore: /.*/
