@@ -13,3 +13,6 @@ workflows:
             frontend/.* frontend-changed true
             backend/.* backend-changed true
           base-revision: origin/main
+          filters:
+            tags:
+              only: /.*/
