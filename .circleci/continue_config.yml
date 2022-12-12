@@ -53,6 +53,11 @@ jobs:
       - image: cimg/base:stable
     steps:
       - run: echo "tag-only-job is executed"
+  main-branch-tag-only-job:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - run: echo "main-branch-tag-only-job is executed"
 
 workflows:
   run_all_jobs:
@@ -97,5 +102,14 @@ workflows:
           filters:
             branches:
               ignore: /.*/
+            tags:
+              only: /.*/
+      - main-branch-tag-only-job:
+          requires:
+            - tag-job
+            - tag-only-job
+          filters:
+            branches:
+              only: main
             tags:
               only: /.*/
