@@ -33,9 +33,33 @@ jobs:
           condition: << pipeline.parameters.backend-changed >>
           steps:
             run: echo "Skip backend-job"
+  develop-branch-job:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - run: echo "develop-branch-job is executed"
+  main-branch-job:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - run: echo "main-branch-job is executed"
 
 workflows:
   run_all_jobs:
     jobs:
       - frontend-job
       - backend-job
+      - develop-branch-job:
+          requires:
+            - frontend-job
+            - backend-job
+          filters:
+            branches:
+              only: develop
+      - main-branch-job:
+          requires:
+            - frontend-job
+            - backend-job
+          filters:
+            branches:
+              only: main
